@@ -30,7 +30,7 @@ function startMockApp(cfg) {
   /* ---------- state ---------- */
   const S = {
     phase: 'intro',            // intro | test | review | break | results
-    minutes: 39, mod: 0, idx: 0, deadline: 0, timerHidden: false, warned: false, timerId: null,
+    minutes: 39, mod: 0, idx: 0, remaining: 0, lastTick: 0, lastSave: 0, timerHidden: false, warned: false, timerId: null,
     ans: [[], []], flag: [[], []], elim: [[], []], used: [0, 0], auto: [false, false],
     viewing: null              // завершённая попытка, которую сейчас смотрим
   };
@@ -45,8 +45,26 @@ function startMockApp(cfg) {
   resetAttempt();
 
   /* ---------- persistence ---------- */
+  /* ---------- «честный» таймер ----------
+     Время модуля — это оставшиеся миллисекунды (S.remaining), а не абсолютный дедлайн.
+     Они уменьшаются только пока тест реально открыт и вкладка видна. Если страницу закрыли,
+     вкладку свернули или переключились на другую — часы стоят, а остаток сохранён вместе с ответами. */
+  const MAX_STEP = 5000;   // максимум, который можно «засчитать» за один шаг (сон ноутбука и т.п. не считается)
+  function clockRuns() { return S.phase === 'test' || S.phase === 'review'; }
+  function account(force) {
+    const now = Date.now();
+    if (S.lastTick && clockRuns() && (force || document.visibilityState === 'visible')) {
+      S.remaining = Math.max(0, S.remaining - Math.min(MAX_STEP, Math.max(0, now - S.lastTick)));
+    }
+    S.lastTick = now;
+  }
+  function fmtClock(ms) {
+    const mm = Math.floor(ms / 60000), ss = Math.floor((ms % 60000) / 1000);
+    return String(mm).padStart(2, '0') + ':' + String(ss).padStart(2, '0');
+  }
   function snapshot() {
-    return { v: 1, phase: S.phase, mod: S.mod, idx: S.idx, minutes: S.minutes, deadline: S.deadline,
+    account();
+    return { v: 1, phase: S.phase, mod: S.mod, idx: S.idx, minutes: S.minutes, remaining: Math.round(S.remaining),
       ans: S.ans, flag: S.flag, elim: S.elim, used: S.used, auto: S.auto, savedAt: Date.now() };
   }
   function save() {
@@ -58,10 +76,14 @@ function startMockApp(cfg) {
       Number.isInteger(p.idx) && p.idx >= 0 && p.idx < NQ && (p.minutes === 39 || p.minutes === 32) &&
       arr(p.ans, x => x === null || (Number.isInteger(x) && x >= 0 && x < 4)) &&
       arr(p.flag, x => typeof x === 'boolean') && arr(p.elim, Array.isArray) &&
-      Array.isArray(p.used) && Array.isArray(p.auto);
+      Array.isArray(p.used) && Array.isArray(p.auto) && (p.remaining === undefined || typeof p.remaining === 'number');
   }
   function restore(p) {
-    S.phase = p.phase; S.mod = p.mod; S.idx = p.idx; S.minutes = p.minutes; S.deadline = p.deadline || 0;
+    S.phase = p.phase; S.mod = p.mod; S.idx = p.idx; S.minutes = p.minutes;
+    // новый формат хранит остаток; старые сохранения (с deadline) — остаток на момент последнего сохранения
+    S.remaining = typeof p.remaining === 'number' ? p.remaining : Math.max(0, (p.deadline || 0) - (p.savedAt || Date.now()));
+    S.remaining = Math.min(S.minutes * 60000, Math.max(0, S.remaining));
+    S.warned = S.remaining <= 300000;
     S.ans = p.ans; S.flag = p.flag; S.elim = p.elim; S.used = p.used.slice(0, 2); S.auto = p.auto.slice(0, 2).map(Boolean);
   }
 
@@ -188,12 +210,13 @@ function startMockApp(cfg) {
   /* ---------- module flow ---------- */
   function startModule(m) {
     S.mod = m; S.idx = 0; S.warned = false;
-    S.deadline = Date.now() + S.minutes * 60000;
+    S.remaining = S.minutes * 60000;
     enterTest();
     save();
   }
   function enterTest() {
     clearInterval(S.timerId);
+    S.lastTick = Date.now(); S.lastSave = Date.now();
     S.timerId = setInterval(tick, 400);
     $('mod-label').textContent = 'Reading and Writing · Module ' + (S.mod + 1);
     $('nav-pop').hidden = true;
@@ -204,14 +227,27 @@ function startMockApp(cfg) {
   }
   function tick() {
     if (S.phase !== 'test' && S.phase !== 'review') return;
-    const rem = Math.max(0, S.deadline - Date.now());
-    const mm = Math.floor(rem / 60000), ss = Math.floor((rem % 60000) / 1000);
+    account();
+    const rem = S.remaining;
     const el = $('timer');
-    el.textContent = S.timerHidden ? '— : —' : String(mm).padStart(2, '0') + ':' + String(ss).padStart(2, '0');
+    el.textContent = S.timerHidden ? '— : —' : fmtClock(rem);
     el.classList.toggle('low', rem <= 300000);
     if (rem <= 300000 && rem > 0 && !S.warned) { S.warned = true; toast('Осталось 5 минут'); }
-    if (rem === 0) submitModule(true);
+    if (rem === 0) { submitModule(true); return; }
+    if (Date.now() - S.lastSave >= 5000) { S.lastSave = Date.now(); save(); }   // остаток времени сохраняется каждые 5 с
   }
+  // вкладку свернули / закрыли — часы останавливаются, остаток и ответы сразу пишем на диск
+  function persistNow(force) {
+    if (!clockRuns()) return;
+    account(force);
+    save();
+    try { SatStore.flush(); } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') persistNow(true);
+    else S.lastTick = Date.now();                // вернулись: считаем с этого момента
+  });
+  window.addEventListener('pagehide', () => persistNow(false));
   $('timer-toggle').addEventListener('click', () => {
     S.timerHidden = !S.timerHidden;
     $('timer-toggle').textContent = S.timerHidden ? 'Показать' : 'Скрыть';
@@ -336,8 +372,9 @@ function startMockApp(cfg) {
   function submitModule(auto) {
     if (S.phase !== 'test' && S.phase !== 'review') return;
     clearInterval(S.timerId);
+    account();
     const m = S.mod;
-    S.used[m] = auto ? S.minutes * 60 : Math.min(S.minutes * 60, Math.round((Date.now() - (S.deadline - S.minutes * 60000)) / 1000));
+    S.used[m] = auto ? S.minutes * 60 : Math.min(S.minutes * 60, Math.round((S.minutes * 60000 - S.remaining) / 1000));
     S.auto[m] = !!auto;
     $('nav-pop').hidden = true;
     if (m === 0) {
@@ -453,16 +490,16 @@ function startMockApp(cfg) {
     if (p && validSnapshot(p)) {
       restore(p);
       if (p.phase === 'break') { enterBreak(false); toast('Прогресс восстановлен'); return; }
-      if (Date.now() >= S.deadline) {
-        // пока страницы не было, время модуля истекло — отправляем как при автозавершении
+      if (S.remaining <= 0) {
+        // время модуля уже было полностью использовано (страницу закрыли ровно в момент окончания) — отправляем
         S.phase = 'test';
-        toast('Пока тебя не было, время модуля вышло — он отправлен автоматически');
+        toast('Время модуля вышло — он отправлен автоматически');
         submitModule(true);
         return;
       }
       enterTest();
       if (p.phase === 'review') openReview();
-      toast('Прогресс восстановлен: Модуль ' + (S.mod + 1) + ', вопрос ' + (S.idx + 1));
+      toast('Прогресс восстановлен: Модуль ' + (S.mod + 1) + ', вопрос ' + (S.idx + 1) + ' · осталось ' + fmtClock(S.remaining));
       return;
     }
     if (p) SatStore.clearProgress(TEST_ID);
