@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAT Math · Домашнее задание 3 · Геометрия</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root {
+    --navy: #0C2340; --accent: #7A3FE0; --accent2: #0B5FFF; --gold: #C9A227;
+    --bg: #F6F7F9; --card-bg: #ffffff; --ink: #1B2430; --muted: #5A6577; --line: #DCE1E9; --head: #0C2340;
+    --good: #0E9F6E; --bad: #C0392B; --sel-bg: rgba(122,63,224,0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #0B1220; --card-bg: #16203A; --ink: #E7ECF5; --muted: #9AA7C0; --line: #2A3654; --head: #ffffff; --sel-bg: rgba(122,63,224,0.25); }
+  }
+  :root[data-theme="dark"] { --bg: #0B1220; --card-bg: #16203A; --ink: #E7ECF5; --muted: #9AA7C0; --line: #2A3654; --head: #ffffff; --sel-bg: rgba(122,63,224,0.25); }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; padding-top: env(safe-area-inset-top, 0px); }
+  h1, h2, h3 { font-family: Georgia, serif; font-weight: 400; color: var(--head); margin: 0; }
+  button { font-family: inherit; cursor: pointer; color: inherit; }
+  .center { width: 100%; max-width: 760px; margin: 0 auto; padding: 28px 16px 80px; }
+  .topline { display: flex; justify-content: space-between; align-items: center; gap: 10px 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  .back-link { font-size: 13px; color: var(--accent2); text-decoration: none; }
+  .kicker { display: inline-block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 20px; padding: 4px 12px; margin-bottom: 12px; }
+  .card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin-bottom: 14px; }
+  .card h3 { font-size: 17px; margin-bottom: 10px; }
+  .card p, .card li { font-size: 14.5px; line-height: 1.6; }
+  .card ul { margin: 6px 0 0; padding-left: 20px; }
+  .muted { color: var(--muted); }
+  a.inl { color: var(--accent2); }
+  .btn { border: none; border-radius: 12px; padding: 12px 20px; font-size: 14.5px; font-weight: 700; background: var(--navy); color: #fff; transition: opacity .15s, transform .1s; }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: .35; cursor: default; }
+  .btn.ghost { background: var(--card-bg); color: var(--head); border: 1px solid var(--line); }
+  .btn.small { padding: 8px 14px; font-size: 13px; }
+
+  /* sticky progress */
+  .sticky { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0 8px; margin: 0 0 6px; }
+  .prog-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; gap: 10px; flex-wrap: wrap; }
+  .prog-row b { color: var(--head); }
+  .track { height: 6px; background: var(--line); border-radius: 6px; overflow: hidden; display: flex; }
+  .track i { display: block; height: 100%; }
+  .track .ok { background: var(--good); } .track .no { background: var(--bad); }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .filters button { border: 1px solid var(--line); background: var(--card-bg); color: var(--head); border-radius: 20px; padding: 6px 13px; font-size: 12.5px; font-weight: 700; }
+  .filters button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  /* questions */
+  .q { background: var(--card-bg); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin-bottom: 14px; scroll-margin-top: 110px; }
+  .q.done-ok { border-left: 4px solid var(--good); }
+  .q.done-no { border-left: 4px solid var(--bad); }
+  .qhead { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .qno { background: var(--navy); color: #fff; font-weight: 800; font-size: 14px; border-radius: 6px; padding: 4px 10px; }
+  .qtag { font-size: 11.5px; color: var(--muted); letter-spacing: .3px; }
+  .qkind { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--accent); border: 1px solid var(--accent); border-radius: 20px; padding: 2px 9px; }
+  .qtext { font-size: 16px; line-height: 1.6; margin: 0 0 14px; }
+  .qtext p { margin: 0 0 10px; }
+  .opt { display: flex; width: 100%; align-items: center; gap: 12px; text-align: left; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card-bg); color: var(--ink); padding: 11px 14px; font-size: 15.5px; line-height: 1.45; margin-bottom: 9px; min-height: 48px; }
+  .opt .l { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--muted); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: var(--muted); }
+  .opt.sel { border-color: var(--accent); background: var(--sel-bg); }
+  .opt.sel .l { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .opt.correct { border-color: var(--good); background: rgba(14,159,110,.12); }
+  .opt.correct .l { background: var(--good); border-color: var(--good); color: #fff; }
+  .opt.wrong { border-color: var(--bad); background: rgba(192,57,43,.12); }
+  .opt.wrong .l { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .opt:disabled { cursor: default; }
+  .spr { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .spr input { width: 170px; font-size: 19px; padding: 9px 11px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-family: inherit; }
+  .spr input:focus { outline: none; border-color: var(--accent); }
+  .spr input:disabled { opacity: .8; }
+  .spr .pv { font-size: 15px; color: var(--muted); }
+  .spr-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .qfoot { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .verdict { font-size: 14px; font-weight: 700; }
+  .verdict.ok { color: var(--good); } .verdict.no { color: var(--bad); }
+  .expl { margin-top: 12px; font-size: 14.5px; line-height: 1.65; border-left: 3px solid var(--gold); padding: 2px 0 2px 12px; }
+  .expl p { margin: 6px 0 0; }
+  table.mini { border-collapse: collapse; font-size: 14.5px; margin: 6px 0 14px; }
+  table.mini th, table.mini td { border: 1px solid var(--line); padding: 5px 12px; text-align: center; }
+  table.mini th { background: var(--bg); }
+  .hw-switch { display: inline-flex; gap: 6px; margin: 0 0 14px; flex-wrap: wrap; }
+  .hw-switch a { font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--line); color: var(--head); text-decoration: none; background: var(--card-bg); }
+  .hw-switch a.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  svg.fig { display: block; width: 100%; max-width: 420px; height: auto; margin: 2px 0 12px; color: var(--ink); }
+  svg.fig text { fill: currentColor; font-family: Georgia, serif; font-style: italic; font-size: 16px; }
+  svg.fig text.sm { font-style: normal; font-size: 13.5px; }
+  .figcap { font-family: Georgia, serif; font-size: 13.5px; color: var(--muted); margin: -6px 0 12px !important; }
+  ol.roman { list-style: upper-roman; margin: 10px 0 0; padding-left: 28px; }
+  ol.roman li { margin-bottom: 4px; }
+
+  /* results */
+  .scorebox { text-align: center; padding: 6px 0 10px; }
+  .score-big { font-family: Georgia, serif; font-size: 64px; color: var(--head); line-height: 1; }
+  .score-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .drow { margin: 10px 0; }
+  .drow .dl { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 5px; }
+  .bar { height: 8px; background: var(--line); border-radius: 8px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 8px; }
+  .hist { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .hist th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 4px 6px 8px; }
+  .hist td { padding: 9px 6px; border-top: 1px solid var(--line); vertical-align: middle; }
+  .hist td.sc { font-family: Georgia, serif; font-size: 20px; color: var(--head); }
+  .hist td.go { text-align: right; }
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+  .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 13.5px; z-index: 20; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+</style>
+</head>
+<body>
+<div class="center">
+  <div class="topline"><a class="back-link" href="index.html">← Словарный тренажёр</a><span data-userbar></span></div>
+  <div class="hw-switch"><a href="sat-math-hw-1.html">HW 1</a><a href="sat-math-hw-2.html">HW 2 · Desmos</a><a href="sat-math-hw-3.html" class="on">HW 3 · Геометрия</a></div><br>
+  <span class="kicker">SAT Math · Домашнее задание · Геометрия</span>
+  <h1 style="font-size:30px; margin-bottom:6px;">HW 3 · Прямые, углы и треугольники</h1>
+  <p class="muted" style="margin:0 0 18px; font-size:14.5px;">16 задач уровня <b>Hard</b> из раздела Geometry &amp; Trigonometry: параллельные прямые и углы, равенство и подобие треугольников. 11 задач — из официального банка вопросов SAT, 5 дополнительных отмечены ★. Без таймера — решай в своём темпе.</p>
+
+  <div class="card" id="intro-card">
+    <h3>Как делать</h3>
+    <ul>
+      <li>Сначала реши задачу сам — на бумаге или в <a class="inl" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">калькуляторе Desmos</a> (на SAT он разрешён на всех вопросах).</li>
+      <li>Выбери вариант или впиши ответ и нажми <b>«Проверить»</b>. Ответ фиксируется, и появляется подробный разбор — поменять его уже нельзя, так что не торопись.</li>
+      <li>В задачах с полем для ответа можно писать целое число, десятичную дробь (<b>2.5</b>) или обычную дробь (<b>5/2</b>).</li>
+      <li><b>Прогресс сохраняется</b> под твоим именем — можно закрыть страницу и продолжить позже.</li>
+      <li>Когда закончишь, нажми <b>«Сдать домашку»</b> внизу — результат сохранится и появится на главной странице.</li>
+    </ul>
+  </div>
+
+  <div class="card" id="result-card" hidden>
+    <p class="muted" id="res-date" style="text-align:center; font-size:13px; margin:0 0 6px;"></p>
+    <div class="scorebox"><div class="score-big" id="res-score">—</div><div class="score-sub" id="res-sub"></div></div>
+    <div id="res-domains"></div>
+    <div class="actions">
+      <button class="btn" id="btn-redo">Решить заново</button>
+      <a class="btn ghost" href="index.html" style="text-decoration:none;">На главную</a>
+    </div>
+  </div>
+
+  <div class="sticky">
+    <div class="prog-row"><span id="prog-left"></span><span id="prog-right"></span></div>
+    <div class="track"><i class="ok" id="tr-ok"></i><i class="no" id="tr-no"></i></div>
+    <div class="filters" id="filters">
+      <button data-f="all" class="on">Все</button>
+      <button data-f="open">Не проверены</button>
+      <button data-f="wrong">Ошибки</button>
+    </div>
+  </div>
+
+  <div id="qlist"></div>
+  <p class="muted" id="empty-note" hidden>Здесь ничего нет.</p>
+
+  <div class="actions" id="submit-row">
+    <button class="btn" id="btn-submit">Сдать домашку</button>
+    <button class="btn ghost" id="btn-reset">Начать заново</button>
+  </div>
+
+  <div class="card" id="history-card" style="margin-top:26px;" hidden><h3>Твои попытки</h3><div id="history-body"></div></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="sat-store.js"></script>
+<script>
+const HW_ID = 'hw3';
+const DOM = { ang: 'Lines & Angles', cong: 'Congruent Triangles', sim: 'Similar Triangles' };
+const ORDER = ['ang', 'cong', 'sim'];
+const LETTERS = ['A', 'B', 'C', 'D'];
+
+/* ---------- figures (inline SVG, цвет берётся из темы) ---------- */
+const FIG_RTU = String.raw`<svg class="fig" viewBox="0 0 400 235" role="img" aria-label="Triangle figure with points S, T, U, R, V">
+  <g fill="none" stroke="currentColor" stroke-width="1.6">
+    <line x1="81" y1="25" x2="359" y2="205"/><line x1="81" y1="205" x2="359" y2="205"/>
+    <line x1="81" y1="205" x2="220" y2="115"/><line x1="81" y1="25" x2="169" y2="205"/>
+    <path d="M154 205 A15 15 0 0 1 162.4 191.5"/>
+  </g>
+  <text x="70" y="22">S</text><text x="218" y="104">T</text><text x="366" y="210">U</text><text x="64" y="210">R</text><text x="164" y="228">V</text>
+  <text x="106" y="66" class="sm">31°</text><text x="203" y="142" class="sm">114°</text><text x="128" y="199" class="sm">x°</text>
+</svg>`;
+const FIG_MNP = String.raw`<svg class="fig" viewBox="0 0 320 190" role="img" aria-label="Right triangle MNP with altitude NQ">
+  <g fill="none" stroke="currentColor" stroke-width="1.6">
+    <polygon points="30,160 123.6,35.2 290,160"/><line x1="123.6" y1="35.2" x2="123.6" y2="160"/>
+    <polyline points="123.6,150 133.6,150 133.6,160" stroke-width="1.1"/>
+    <polyline points="117.6,43.2 125.6,49.2 131.6,41.2" stroke-width="1.1"/>
+  </g>
+  <text x="117" y="27">N</text><text x="12" y="167">M</text><text x="297" y="167">P</text><text x="118" y="180">Q</text>
+  <text x="62" y="94">3</text><text x="214" y="94">4</text>
+</svg>`;
+const FIG_LMPQ = String.raw`<svg class="fig" viewBox="0 0 500 235" role="img" aria-label="Segments LQ and MP intersecting at R, LM parallel to PQ">
+  <g fill="none" stroke="currentColor" stroke-width="1.6">
+    <line x1="30" y1="110" x2="464" y2="110"/><line x1="150" y1="40" x2="310" y2="200"/>
+    <line x1="30" y1="110" x2="150" y2="40"/><line x1="310" y1="200" x2="464" y2="110"/>
+  </g>
+  <text x="144" y="30">M</text><text x="12" y="116">L</text><text x="226" y="100">R</text><text x="472" y="116">Q</text><text x="304" y="222">P</text>
+</svg><p class="figcap">Note: Figure not drawn to scale.</p>`;
+
+/* =====================================================================
+   QUESTIONS · d: domain · t: mc | spr · q: stem (HTML + KaTeX)
+   o: options · a: correct index · acc: accepted SPR answers · e: explanation
+   ★ = новая задача (не из банка вопросов)
+   ===================================================================== */
+const Q = [
+ /* ---------- Lines & Angles ---------- */
+ { d:'ang', t:'mc', a:0, q:String.raw`A line intersects two parallel lines, forming four acute angles and four obtuse angles. The measure of one of these eight angles is \((7x-250)^\circ\). The sum of the measures of four of the eight angles is \(k^\circ\). Which of the following could <b>NOT</b> be equivalent to \(k\), for all values of \(x\)?`,
+   o:[String.raw`\(-14x+1{,}540\)`,String.raw`\(14x-320\)`,String.raw`\(-28x+1{,}720\)`,String.raw`\(360\)`],
+   e:String.raw`Когда секущая пересекает две параллельные прямые, все 4 острых угла равны между собой, все 4 тупых — тоже, а острый + тупой \(=180^\circ\). Значит, каждый из восьми углов равен либо \((7x-250)^\circ\), либо \(180-(7x-250)=(-7x+430)^\circ\).<p>Переберём, сколько углов первого вида попало в четвёрку:<br>4 шт.: \(28x-1000\)<br>3 шт.: \(3(7x-250)+(-7x+430)=14x-320\) — это B<br>2 шт.: \(2(7x-250)+2(-7x+430)=360\) — это D<br>1 шт.: \((7x-250)+3(-7x+430)=-14x+1040\)<br>0 шт.: \(4(-7x+430)=-28x+1720\) — это C</p><p>Выражения \(-14x+1540\) среди них нет. Ловушка — спутать с \(-14x+1040\): коэффициент тот же, а константа другая.</p>` },
+ { d:'ang', t:'mc', a:0, q:String.raw`Two lines intersect at exactly one point, forming two acute angles and two obtuse angles. The measure of one of these angles is \((9x-140)^\circ\). Which of the following could <b>NOT</b> be the sum of the measures of any two of these angles?`,
+   o:[String.raw`\((-18x+280)^\circ\)`,String.raw`\((-18x+640)^\circ\)`,String.raw`\((18x-280)^\circ\)`,String.raw`\(180^\circ\)`],
+   e:String.raw`Вертикальные углы равны, смежные в сумме дают \(180^\circ\). Значит, углы такие: два по \((9x-140)^\circ\) и два по \(180-(9x-140)=(-9x+320)^\circ\).<p>Возможные суммы двух углов:<br>два «первых»: \(18x-280\) — C<br>два «вторых»: \(-18x+640\) — B<br>один и другой (смежные): \(180\) — D</p><p>Вариант A, \(-18x+280\), — это \(18x-280\) с перевёрнутым знаком. Такой суммы не бывает.</p>` },
+ { d:'ang', t:'mc', a:2, q:FIG_RTU + String.raw`In the figure above, \(RT=TU\). What is the value of \(x\)?`,
+   o:['72','66','64','58'],
+   e:String.raw`Раз \(RT=TU\), треугольник \(RTU\) равнобедренный с основанием \(RU\), и углы при основании равны: \(\angle TRU=\angle TUR=t^\circ\). Сумма углов: \(114+2t=180\Rightarrow t=33\).<p>Угол \(SUV\) — это тот же угол при вершине \(U\), то есть \(33^\circ\). Угол \(x^\circ\) (\(\angle SVR\)) — <b>внешний</b> угол треугольника \(SVU\), он равен сумме двух несмежных с ним внутренних углов: \(x=31+33=64\).</p><p>Ловушка 66 — это \(\angle STR=180-114\), а не нужный угол.</p>` },
+ { d:'ang', t:'spr', acc:['115'], q:String.raw`★ Parallel lines \(\ell\) and \(m\) are intersected by a transversal. One of the acute angles formed has measure \((3x+5)^\circ\), and one of the obtuse angles formed has measure \((5x+15)^\circ\). What is the measure, in degrees, of one of the obtuse angles?`,
+   e:String.raw`При параллельных прямых и секущей любой острый угол и любой тупой в сумме дают \(180^\circ\): \((3x+5)+(5x+15)=180\Rightarrow 8x=160\Rightarrow x=20\).<p>Тупой угол: \(5\cdot20+15=115\). Проверка: острый \(3\cdot20+5=65\), и \(65+115=180\) ✓.</p><p>Ловушки: приравнять углы (выйдет \(x=-5\), углы отрицательные — бессмыслица); ответить 20 — это \(x\), а не угол; ответить 65 — это острый угол.</p>` },
+ { d:'ang', t:'mc', a:3, q:String.raw`★ In triangle \(ABC\), the measure of angle \(A\) is \((2k+10)^\circ\) and the measure of angle \(B\) is \((3k+14)^\circ\). The exterior angle at vertex \(C\) has measure \((7k)^\circ\). What is the measure, in degrees, of angle \(ACB\)?`,
+   o:['12','50','84','96'],
+   e:String.raw`Внешний угол треугольника равен сумме двух внутренних углов, не смежных с ним: \(7k=(2k+10)+(3k+14)\Rightarrow 2k=24\Rightarrow k=12\).<p>Внешний угол: \(7\cdot12=84^\circ\). Внутренний угол \(ACB\) смежен с ним: \(180-84=96^\circ\). Проверка: \(A=34\), \(B=50\), \(C=96\), сумма \(180\) ✓.</p><p>Ловушки: 84 — это внешний угол, а спрашивают внутренний; 12 — это \(k\); 50 — угол \(B\).</p>` },
+
+ /* ---------- Congruent Triangles ---------- */
+ { d:'cong', t:'mc', a:1, q:String.raw`In triangle \(ABC\) and triangle \(DEF\), sides \(AB\) and \(DE\) each have a side length of 6 inches, and angles \(A\) and \(D\) each have an angle measure of \(65^\circ\). Which of the following additional pieces of information is(are) sufficient to prove whether triangle \(ABC\) is congruent to triangle \(DEF\)?<ol class="roman"><li>The measures of angles \(B\) and \(C\) are equal.</li><li>The lengths of sides \(AC\) and \(DF\) are equal.</li><li>The lengths of sides \(BC\) and \(EF\) are equal.</li></ol>`,
+   o:['I is sufficient, but II and III are not.','II is sufficient, but I and III are not.','III is sufficient, but I and II are not.','II is sufficient and III is sufficient, but I is not.'],
+   e:String.raw`Дано: \(AB=DE\) и \(\angle A=\angle D\). Угол \(A\) лежит между сторонами \(AB\) и \(AC\).<p><b>II.</b> \(AC=DF\) — тогда в обоих треугольниках две стороны и угол <b>между ними</b> равны: признак SAS ✓.</p><p><b>III.</b> \(BC=EF\) — эти стороны лежат напротив данного угла. Это SSA, и такого признака равенства нет: по таким данным можно построить два разных треугольника.</p><p><b>I.</b> \(\angle B=\angle C\) — оба угла в одном треугольнике \(ABC\), про \(DEF\) это ничего не говорит.</p><p>Ответ: достаточно только II.</p>` },
+ { d:'cong', t:'mc', a:0, q:String.raw`★ In triangles \(ABC\) and \(DEF\), angles \(B\) and \(E\) each have measure \(40^\circ\), and angles \(C\) and \(F\) each have measure \(75^\circ\). Which additional piece of information is sufficient to prove that triangle \(ABC\) is congruent to triangle \(DEF\)?`,
+   o:[String.raw`\(AB=8\) and \(DE=8\)`,String.raw`\(AB=8\) and \(EF=8\)`,String.raw`The measures of angles \(A\) and \(D\) are each \(65^\circ\).`,String.raw`\(AC=8\) and \(DE=8\)`],
+   e:String.raw`Две пары равных углов уже дают <b>подобие</b>. Для <b>равенства</b> нужна ещё одна пара <b>соответственных</b> равных сторон.<p>Соответствие вершин: \(A\leftrightarrow D\), \(B\leftrightarrow E\), \(C\leftrightarrow F\). Поэтому \(AB\) соответствует \(DE\). Если \(AB=DE\), треугольники равны по признаку AAS (две пары углов и сторона) ✓.</p><p>B: \(AB\) и \(EF\) — не соответственные стороны. D: \(AC\) соответствует \(DF\), а не \(DE\). C: третий угол и так равен \(180-40-75=65^\circ\). Три равных угла (AAA) доказывают только подобие, а не равенство: треугольники могут быть разного размера.</p>` },
+
+ /* ---------- Similar Triangles ---------- */
+ { d:'sim', t:'mc', a:2, q:String.raw`Triangle \(XYZ\) is similar to triangle \(RST\) such that \(X\), \(Y\), and \(Z\) correspond to \(R\), \(S\), and \(T\), respectively. The measure of \(\angle Z\) is \(20^\circ\) and \(2XY=RS\). What is the measure of \(\angle T\)?`,
+   o:[String.raw`\(2^\circ\)`,String.raw`\(10^\circ\)`,String.raw`\(20^\circ\)`,String.raw`\(40^\circ\)`],
+   e:String.raw`\(Z\) соответствует \(T\), а соответственные углы подобных треугольников равны: \(\angle T=20^\circ\).<p>Условие \(2XY=RS\) задаёт коэффициент подобия 2, но он меняет только <b>длины</b>, а углы остаются прежними. Ловушки 10 и 40 — это попытка поделить или умножить угол на 2.</p>` },
+ { d:'sim', t:'mc', a:3, q:String.raw`Quadrilaterals \(PQRS\) and \(WXYZ\) are similar, where \(P\), \(Q\), and \(R\) correspond to \(W\), \(X\), and \(Y\), respectively. The measure of \(\angle S\) is \(135^\circ\), \(PS=45\), and \(WZ=9\). What is the measure of \(\angle Z\)?`,
+   o:[String.raw`\(5^\circ\)`,String.raw`\(27^\circ\)`,String.raw`\(45^\circ\)`,String.raw`\(135^\circ\)`],
+   e:String.raw`Раз \(P,Q,R\) соответствуют \(W,X,Y\), оставшаяся вершина \(S\) соответствует \(Z\). Углы подобных фигур равны: \(\angle Z=135^\circ\).<p>Стороны \(45\) и \(9\) (коэффициент 5) — лишняя информация для угла. Ловушки: \(27=135/5\) — угол поделили на коэффициент; \(45\) — дополнение до \(180^\circ\).</p>` },
+ { d:'sim', t:'mc', a:0, q:String.raw`Triangle \(ABC\) is similar to triangle \(XYZ\), where \(A\) and \(B\) correspond to \(X\) and \(Y\), respectively. The length of each side of triangle \(XYZ\) is \(k\) times the length of its corresponding side in triangle \(ABC\), where \(k\) is an integer greater than 1. The measure, in degrees, of angle \(Z\) can be represented by the expression \(7x+25\), where \(x\) is an integer. Which of the following expressions represents the measure, in degrees, of angle \(C\) for all possible values of \(x\)?`,
+   o:[String.raw`\(7x+25\)`,String.raw`\(k(7x+25)\)`,String.raw`\(90-(7x+25)\)`,String.raw`\(180-k(7x+25)\)`],
+   e:String.raw`\(A\to X\), \(B\to Y\), значит \(C\to Z\). Соответственные углы подобных треугольников равны, поэтому \(\angle C=\angle Z=(7x+25)^\circ\).<p>Коэффициент \(k\) умножает только стороны. Вариант B — главная ловушка: «увеличить треугольник в \(k\) раз» не значит увеличить его углы.</p>` },
+ { d:'sim', t:'mc', a:3, q:String.raw`In triangles \(LMN\) and \(RST\), angles \(L\) and \(R\) each have measure \(60^\circ\), \(LN=10\), and \(RT=30\). Which additional piece of information is sufficient to prove that triangle \(LMN\) is similar to triangle \(RST\)?`,
+   o:[String.raw`\(MN=7\) and \(ST=7\)`,String.raw`\(MN=7\) and \(ST=21\)`,String.raw`The measures of angles \(M\) and \(S\) are \(70^\circ\) and \(60^\circ\), respectively.`,String.raw`The measures of angles \(M\) and \(T\) are \(70^\circ\) and \(50^\circ\), respectively.`],
+   e:String.raw`Одна пара равных углов (\(L=R=60^\circ\)) уже есть. Для подобия по двум углам (AA) нужна ещё одна.<p><b>D:</b> \(\angle M=70^\circ\Rightarrow\angle N=180-60-70=50^\circ\). \(\angle T=50^\circ\Rightarrow\angle S=180-60-50=70^\circ\). Получаем \(M=S=70^\circ\), \(N=T=50^\circ\) — подобны ✓.</p><p><b>C:</b> углы \(LMN\): 60, 70, 50; углы \(RST\): 60, 60, 60 — не подобны.</p><p><b>B:</b> \(\frac{MN}{ST}=\frac{7}{21}=\frac13=\frac{LN}{RT}\), но угол \(60^\circ\) не лежит между этими сторонами. Это SSA, такого признака нет. <b>A:</b> стороны даже не пропорциональны.</p>` },
+ { d:'sim', t:'mc', a:2, q:FIG_MNP + String.raw`In the figure above, what is the length of \(\overline{NQ}\)?`,
+   o:['2.2','2.3','2.4','2.5'],
+   e:String.raw`Треугольник \(MNP\) прямоугольный (прямой угол при \(N\)) с катетами 3 и 4, значит гипотенуза \(MP=5\) (тройка 3–4–5).<p>Треугольники \(MNP\) и \(NQP\) подобны: общий угол \(P\) и прямые углы при \(N\) и \(Q\). Отсюда \(\frac{NQ}{MN}=\frac{NP}{MP}\Rightarrow\frac{NQ}{3}=\frac45\Rightarrow NQ=\frac{12}{5}=2.4\).</p><p>Быстрый способ через площадь: \(\frac12\cdot3\cdot4=\frac12\cdot5\cdot NQ\Rightarrow NQ=2.4\). Высота к гипотенузе = произведение катетов / гипотенуза.</p>` },
+ { d:'sim', t:'spr', acc:['6'], q:String.raw`★ In right triangle \(ABC\), angle \(C\) is the right angle. Point \(D\) lies on hypotenuse \(\overline{AB}\) such that \(\overline{CD}\) is perpendicular to \(\overline{AB}\). If \(AD=4\) and \(DB=9\), what is the length of \(\overline{CD}\)?`,
+   e:String.raw`Высота из прямого угла делит треугольник на два подобных: \(\triangle ACD\sim\triangle CBD\). У обоих есть прямой угол при \(D\), а \(\angle ACD=\angle B\), так как оба дополняют \(\angle A\) до \(90^\circ\).<p>Из подобия: \(\frac{CD}{AD}=\frac{DB}{CD}\Rightarrow CD^2=AD\cdot DB=4\cdot9=36\Rightarrow CD=6\).</p><p>Запомни: <b>высота к гипотенузе — среднее геометрическое отрезков гипотенузы</b>. Ловушки: 13 — это \(AB\), 36 — это \(CD^2\), 6.5 — половина гипотенузы.</p>` },
+ { d:'sim', t:'spr', acc:['54'], q:String.raw`In right triangle \(ABC\), angle \(C\) is the right angle and \(BC=162\). Point \(D\) on side \(\overline{AB}\) is connected by a line segment with point \(E\) on side \(\overline{AC}\) such that line segment \(\overline{DE}\) is parallel to side \(\overline{BC}\) and \(CE=2AE\). What is the length of line segment \(\overline{DE}\)?`,
+   e:String.raw`\(DE\parallel BC\), поэтому соответственные углы равны и \(\triangle ADE\sim\triangle ABC\) (общий угол \(A\)). \(DE\) соответствует \(BC\), \(AE\) соответствует \(AC\).<p>\(AC=AE+CE=AE+2AE=3AE\), значит коэффициент \(\frac{AE}{AC}=\frac13\). Тогда \(DE=\frac{162}{3}=54\).</p><p>Ловушка 81: взяли отношение \(\frac{AE}{CE}=\frac12\). Но сравнивать нужно со <b>всей</b> стороной \(AC\), а не с её куском.</p>` },
+ { d:'sim', t:'mc', a:2, q:String.raw`★ In triangle \(ABC\), point \(D\) lies on \(\overline{AB}\) and point \(E\) lies on \(\overline{AC}\) such that \(\overline{DE}\) is parallel to \(\overline{BC}\). If \(AD=6\), \(DB=4\), and the area of triangle \(ADE\) is 27 square units, what is the area, in square units, of quadrilateral \(DBCE\)?`,
+   o:['18','45','48','75'],
+   e:String.raw`\(DE\parallel BC\Rightarrow\triangle ADE\sim\triangle ABC\). \(AB=6+4=10\), коэффициент \(k=\frac{10}{6}=\frac53\).<p>Площади относятся как \(k^2\): \(S_{ABC}=27\cdot\frac{25}{9}=75\). Четырёхугольник \(DBCE\) — это большой треугольник без маленького: \(75-27=48\).</p><p>Ловушки: 75 — площадь всего треугольника (забыли вычесть); 45 — умножили на \(k\), а не на \(k^2\); 18 — взяли отношение \(\frac{DB}{AD}\).</p>` },
+ { d:'sim', t:'mc', a:3, q:FIG_LMPQ + String.raw`In the figure, \(\overline{LQ}\) intersects \(\overline{MP}\) at point \(R\), and \(\overline{LM}\) is parallel to \(\overline{PQ}\). The lengths of \(\overline{MR}\) and \(\overline{RP}\) are 8 and 14 units, respectively. The area of \(\triangle LMR\) is 36 square units. What is the area of \(\triangle PQR\), in square units?`,
+   o:[String.raw`\(\frac{576}{49}\)`,String.raw`\(\frac{144}{7}\)`,String.raw`\(63\)`,String.raw`\(\frac{441}{4}\)`],
+   e:String.raw`\(\angle MRL=\angle PRQ\) как вертикальные. \(LM\parallel PQ\), поэтому накрест лежащие углы \(\angle MLR=\angle PQR\). Значит, \(\triangle LMR\sim\triangle QPR\), и сторона \(MR\) соответствует \(PR\).<p>Коэффициент \(k=\frac{14}{8}=\frac74\). Площади относятся как \(k^2\): \(36\cdot\frac{49}{16}=\frac{441}{4}\) (= 110.25).</p><p>Ловушки: \(\frac{576}{49}=36\cdot\left(\frac{8}{14}\right)^2\) — перевёрнутый коэффициент; \(\frac{144}{7}=36\cdot\frac{8}{14}\); \(63=36\cdot\frac{14}{8}\) — не возвели в квадрат.</p>` }
+];
+const N = Q.length;
+console.assert(N === 16, 'HW3 must have 16 problems');
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+let st = fresh();
+let viewing = null;     // finished attempt shown read-only
+let filter = 'all';
+function fresh() { return { v: 1, ans: Array(N).fill(null), checked: Array(N).fill(false) }; }
+function valid(p) {
+  return p && p.v === 1 && Array.isArray(p.ans) && p.ans.length === N && Array.isArray(p.checked) && p.checked.length === N;
+}
+function save() {
+  if (viewing) return;
+  const any = st.ans.some(answered) || st.checked.some(Boolean);
+  SatStore.setProgress(HW_ID, any ? Object.assign({ savedAt: Date.now() }, st) : null);
+}
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function math(el) {
+  if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
+  else setTimeout(() => math(el), 250);
+}
+function answered(v) { return v !== null && v !== undefined && v !== ''; }
+function parseNum(s) {
+  s = String(s || '').trim();
+  if (/^-?(\d+\.?\d*|\.\d+)$/.test(s)) return parseFloat(s);
+  const m = s.match(/^(-?)(\d+\.?\d*|\.\d+)\/(\d+\.?\d*|\.\d+)$/);
+  if (m && parseFloat(m[3]) !== 0) return (m[1] ? -1 : 1) * parseFloat(m[2]) / parseFloat(m[3]);
+  return NaN;
+}
+function isCorrect(q, v) {
+  if (!answered(v)) return false;
+  if (q.t === 'mc') return v === q.a;
+  const n = parseNum(v); if (isNaN(n)) return false;
+  return q.acc.some(a => Math.abs(parseNum(a) - n) < 1e-9);
+}
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 3500); }
+function fmtDate(ts) { try { return new Date(ts).toLocaleString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return new Date(ts).toISOString().slice(0, 16).replace('T', ' '); } }
+function curAns(i) { return viewing ? viewing.ans[i] : st.ans[i]; }
+function isLocked(i) { return viewing ? true : st.checked[i]; }
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+function cardHTML(i) {
+  const q = Q[i], a = curAns(i), locked = isLocked(i), ok = isCorrect(q, a);
+  let body = '';
+  if (q.t === 'mc') {
+    body = q.o.map((t, k) => {
+      let cls = 'opt';
+      if (locked) { if (k === q.a) cls += ' correct'; else if (k === a) cls += ' wrong'; }
+      else if (k === a) cls += ' sel';
+      return '<button class="' + cls + '" data-k="' + k + '"' + (locked ? ' disabled' : '') + '><span class="l">' + LETTERS[k] + '</span><span>' + t + '</span></button>';
+    }).join('');
+  } else {
+    body = '<div class="spr"><input inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Ответ" value="' + esc(a || '') + '"' + (locked ? ' disabled' : '') + '><span class="pv"></span></div>' +
+      (locked ? '' : '<div class="spr-hint">Целое число, десятичная дробь (2.5) или дробь (5/2)</div>');
+  }
+  let foot = '';
+  if (locked) {
+    const skip = !answered(a);
+    const right = q.t === 'mc' ? LETTERS[q.a] : q.acc[0];
+    foot = '<div class="qfoot"><span class="verdict ' + (ok ? 'ok' : 'no') + '">' +
+      (ok ? '✓ Верно' : (skip ? '– Нет ответа' : '✕ Неверно') + ' · правильный ответ: ' + esc(right)) + '</span></div>' +
+      '<div class="expl"><b>Разбор.</b> ' + q.e + '</div>';
+  } else {
+    foot = '<div class="qfoot"><button class="btn small" data-check' + (answered(a) ? '' : ' disabled') + '>Проверить</button></div>';
+  }
+  return '<div class="qhead"><span class="qno">' + (i + 1) + '</span><span class="qtag">' + DOM[q.d] + '</span>' +
+    '<span class="qkind">' + (q.t === 'mc' ? 'выбор ответа' : 'свой ответ') + '</span></div>' +
+    '<div class="qtext">' + q.q + '</div>' + body + foot;
+}
+function renderCard(i) {
+  const el = $('q' + i);
+  const locked = isLocked(i), ok = isCorrect(Q[i], curAns(i));
+  el.className = 'q' + (locked ? (ok ? ' done-ok' : ' done-no') : '');
+  el.innerHTML = cardHTML(i);
+  wireCard(i);
+  math(el);
+  applyFilter();
+}
+function wireCard(i) {
+  const el = $('q' + i), q = Q[i];
+  if (isLocked(i)) return;
+  if (q.t === 'mc') {
+    el.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+      const k = +b.dataset.k;
+      st.ans[i] = st.ans[i] === k ? null : k;
+      save(); renderCard(i);
+    }));
+  } else {
+    const inp = el.querySelector('input'), pv = el.querySelector('.pv'), chk = el.querySelector('[data-check]');
+    const upd = () => {
+      const f = inp.value.match(/^(-?)([\d.]+)\/([\d.]+)$/);
+      pv.innerHTML = f ? '= \\(' + f[1] + '\\frac{' + f[2] + '}{' + f[3] + '}\\)' : '';
+      math(pv);
+    };
+    inp.addEventListener('input', () => {
+      let v = inp.value.replace(/[^0-9./-]/g, '').replace(/(?!^)-/g, '').replace(/\/(?=.*\/)/g, '');
+      v = v.slice(0, v.startsWith('-') ? 6 : 5);
+      inp.value = v; st.ans[i] = v || null; save(); upd();
+      chk.disabled = !v || isNaN(parseNum(v));
+    });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !chk.disabled) chk.click(); });
+    upd();
+    if (answered(st.ans[i]) && isNaN(parseNum(st.ans[i]))) chk.disabled = true;
+  }
+  const chk = el.querySelector('[data-check]');
+  if (chk) chk.addEventListener('click', () => {
+    if (!answered(st.ans[i])) return;
+    st.checked[i] = true; save(); renderCard(i); updProgress();
+  });
+}
+function renderAll() {
+  const list = $('qlist'); list.innerHTML = '';
+  for (let i = 0; i < N; i++) {
+    const d = document.createElement('div'); d.id = 'q' + i; list.appendChild(d);
+    renderCard(i);
+  }
+  $('submit-row').hidden = !!viewing;
+  $('intro-card').hidden = !!viewing;
+  updProgress();
+}
+function updProgress() {
+  const checked = i => viewing ? true : st.checked[i];
+  let done = 0, ok = 0;
+  for (let i = 0; i < N; i++) if (checked(i)) { done++; if (isCorrect(Q[i], curAns(i))) ok++; }
+  $('prog-left').innerHTML = viewing ? 'Просмотр сданной попытки' : 'Проверено: <b>' + done + ' / ' + N + '</b>';
+  $('prog-right').innerHTML = 'Верно: <b>' + ok + '</b>' + (done - ok ? ' · ошибок: <b>' + (done - ok) + '</b>' : '');
+  $('tr-ok').style.width = (ok / N * 100) + '%';
+  $('tr-no').style.width = ((done - ok) / N * 100) + '%';
+}
+function applyFilter() {
+  let shown = 0;
+  for (let i = 0; i < N; i++) {
+    const el = $('q' + i); if (!el) continue;
+    const locked = isLocked(i), ok = isCorrect(Q[i], curAns(i));
+    const vis = filter === 'all' || (filter === 'open' && !locked) || (filter === 'wrong' && locked && !ok);
+    el.hidden = !vis; if (vis) shown++;
+  }
+  $('empty-note').hidden = shown > 0;
+}
+$('filters').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  filter = b.dataset.f;
+  [...$('filters').children].forEach(x => x.classList.toggle('on', x === b));
+  applyFilter();
+});
+
+/* =====================================================================
+   SUBMIT / RESULTS / HISTORY
+   ===================================================================== */
+function showResult(a) {
+  viewing = a;
+  const pct = Math.round(a.correct / a.total * 100);
+  $('res-date').textContent = 'Сдано ' + fmtDate(a.finishedAt);
+  $('res-score').textContent = a.correct + '/' + a.total;
+  $('res-sub').textContent = pct + '% · ' + (pct >= 85 ? 'Отличная работа!' : pct >= 60 ? 'Хорошо — разбери ошибки ниже.' : 'Стоит разобрать ошибки и решить ещё раз.');
+  const s = {}; ORDER.forEach(d => s[d] = { c: 0, n: 0 });
+  Q.forEach((q, i) => { s[q.d].n++; if (isCorrect(q, a.ans[i])) s[q.d].c++; });
+  $('res-domains').innerHTML = ORDER.map(d => '<div class="drow"><div class="dl"><span>' + DOM[d] + '</span><b>' + s[d].c + ' / ' + s[d].n + '</b></div><div class="bar"><i style="width:' + Math.round(s[d].c / s[d].n * 100) + '%"></i></div></div>').join('');
+  $('result-card').hidden = false;
+  $('btn-redo').textContent = (st.ans.some(answered) || st.checked.some(Boolean)) ? 'Вернуться к текущей попытке' : 'Решить заново';
+  filter = a.correct < a.total ? 'wrong' : 'all';
+  [...$('filters').children].forEach(x => x.classList.toggle('on', x.dataset.f === filter));
+  renderAll();
+  window.scrollTo(0, 0);
+}
+function backToWork() {
+  viewing = null; $('result-card').hidden = true;
+  filter = 'all'; [...$('filters').children].forEach(x => x.classList.toggle('on', x.dataset.f === 'all'));
+  renderAll(); renderHistory();
+}
+$('btn-submit').addEventListener('click', () => {
+  const open = st.checked.filter(c => !c).length;
+  const msg = (open ? 'Не проверено задач: ' + open + '. Они будут проверены сейчас (без ответа — считается ошибкой).\n\n' : '') + 'Сдать домашку?';
+  if (!confirm(msg)) return;
+  const correct = Q.reduce((c, q, i) => c + (isCorrect(q, st.ans[i]) ? 1 : 0), 0);
+  const att = { id: String(Date.now()), finishedAt: Date.now(), ans: st.ans.slice(), correct: correct, total: N, score: correct + '/' + N };
+  SatStore.addAttempt(HW_ID, att);   // also clears saved progress
+  st = fresh();
+  renderHistory();
+  showResult(att);
+});
+$('btn-reset').addEventListener('click', () => {
+  if (!confirm('Стереть все ответы этой попытки и начать заново?')) return;
+  st = fresh(); SatStore.clearProgress(HW_ID); renderAll(); window.scrollTo(0, 0);
+});
+$('btn-redo').addEventListener('click', () => { backToWork(); window.scrollTo(0, 0); });
+function renderHistory() {
+  const at = SatStore.getAttempts(HW_ID).slice().reverse();
+  $('history-card').hidden = !at.length;
+  if (!at.length) return;
+  $('history-body').innerHTML = '<table class="hist"><tr><th>Дата</th><th>Результат</th><th></th></tr>' +
+    at.map(a => '<tr><td>' + esc(fmtDate(a.finishedAt)) + '</td><td class="sc">' + a.correct + '/' + a.total + '</td>' +
+      '<td class="go"><button class="btn ghost small" data-open="' + esc(a.id) + '">Смотреть</button></td></tr>').join('') + '</table>';
+  $('history-body').querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
+    const a = SatStore.getAttempts(HW_ID).find(x => x.id === b.dataset.open);
+    if (a) showResult(a);
+  }));
+}
+
+/* =====================================================================
+   LOGIN + RESTORE
+   ===================================================================== */
+SatStore.requireLogin().then(() => {
+  const p = SatStore.getProgress(HW_ID);
+  if (valid(p)) {
+    st = { v: 1, ans: p.ans, checked: p.checked.map(Boolean) };
+    const n = st.checked.filter(Boolean).length;
+    if (n) toast('Прогресс восстановлен: проверено ' + n + ' из ' + N);
+  } else if (p) SatStore.clearProgress(HW_ID);
+  renderAll();
+  renderHistory();
+});
+</script>
+</body>
+</html>
